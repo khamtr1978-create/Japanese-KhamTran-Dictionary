@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Japanese_KhamTran_V11</title>
+<!-- Ưu tiên thư viện Excel cùng thư mục (dùng offline); không có thì tải từ mạng -->
+<script src="xlsx.full.min.js"></script>
+<script>if (typeof XLSX === 'undefined') document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>');</script>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#1b2430;--mute:#66758a;--line:#dfe6ef;--brand:#0078d4;--brand-d:#005a9e;--ok:#107c10;--warn:#b45309;--bad:#c4314b;--chip:#e8f1fb}
+*{box-sizing:border-box}
+body{font-family:"Segoe UI","Yu Gothic UI","Meiryo",system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{font-size:22px;margin:0;font-weight:600}
+header .stat{margin-left:auto;font-size:14px;opacity:.95;text-align:right}
+nav{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);padding:0 12px;overflow-x:auto;position:sticky;top:0;z-index:5}
+nav button{background:none;border:0;border-bottom:3px solid transparent;color:var(--mute);padding:13px 16px;font-size:15px;cursor:pointer;border-radius:0;white-space:nowrap}
+nav button.on{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:10px;padding:16px;box-shadow:0 2px 6px #0001;margin-bottom:14px}
+.card h3{margin:0 0 10px;font-size:16px}
+input,select,textarea{padding:9px 10px;border:1px solid #c5d0de;border-radius:6px;font:inherit;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid #9cc9ef;border-color:var(--brand)}
+textarea{min-height:140px;font-family:Consolas,monospace;font-size:13px}
+button{background:var(--brand);color:#fff;border:0;padding:9px 15px;border-radius:6px;font:inherit;cursor:pointer}
+button:hover{background:var(--brand-d)}
+button.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+button.ghost:hover{background:var(--chip)}
+button.danger{background:var(--bad)}
+button.small{padding:4px 10px;font-size:13px}
+button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>.grow{flex:1;min-width:200px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form label{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+.form .full{grid-column:1/-1}
+.search{font-size:18px;padding:12px 14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
+.chip{background:var(--chip);color:var(--brand-d);border:1px solid transparent;padding:3px 10px;border-radius:14px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--brand);color:#fff}
+.meta{color:var(--mute);font-size:13px;margin:8px 2px}
+.res{display:grid;grid-template-columns:minmax(150px,1.1fr) 1.4fr auto;gap:6px 14px;padding:11px 4px;border-bottom:1px solid var(--line);align-items:start}
+.res:last-child{border-bottom:0}
+.res .jp{font-size:20px;font-weight:600;word-break:break-all}
+.res .ro{color:var(--mute);font-size:14px;margin-top:2px}
+.res .vi{font-size:16px}
+.res .en{color:var(--mute);font-size:13px;margin-top:2px}
+.res .tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.tag{background:var(--chip);color:var(--brand-d);border-radius:4px;padding:1px 7px;font-size:12px}
+.tag.p{background:#eef6ee;color:var(--ok)}
+.tag.m{background:#fff4e5;color:var(--warn)}
+.res .act{display:flex;gap:6px}
+mark{background:#ffe58a;border-radius:2px;padding:0}
+.msg{padding:9px 12px;border-radius:6px;margin-top:10px;font-size:14px}
+.msg.ok{background:#e6f4e6;color:var(--ok)}.msg.warn{background:#fff4e5;color:var(--warn)}.msg.bad{background:#fde7ea;color:var(--bad)}.msg.info{background:var(--chip);color:var(--brand-d)}
+.empty{text-align:center;color:var(--mute);padding:30px 10px}
+.hidden{display:none!important}
+.bar{height:8px;background:#e3eaf3;border-radius:5px;overflow:hidden;margin-top:8px}
+.bar>div{height:100%;background:var(--brand);width:0;transition:width .15s}
+table.sheets{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+table.sheets td,table.sheets th{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left}
+table.sheets th{color:var(--mute);font-weight:500;font-size:13px}
+.opts label{display:flex;gap:8px;align-items:center;margin:6px 0;font-size:14px;cursor:pointer}
+.opts input{width:auto}
+dialog{border:0;border-radius:12px;padding:20px;width:min(560px,94vw);box-shadow:0 10px 40px #0004}
+dialog::backdrop{background:#0006}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1b2430;color:#fff;padding:10px 18px;border-radius:8px;z-index:99;font-size:14px;max-width:90vw}
+@media(max-width:700px){.form{grid-template-columns:1fr}.res{grid-template-columns:1fr}header .stat{margin-left:0;text-align:left}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Japanese_KhamTran | 日本語辞典</h1>
+  <div class="stat"><div id="stat">Đang mở dữ liệu…</div><button id="syBadge" class="small hidden" style="margin-top:4px;background:#fff;color:var(--brand)">🔄 Cấp quyền đồng bộ</button></div>
+</header>
+<nav id="tabs">
+  <button data-tab="search" class="on">🔎 Tra từ</button>
+  <button data-tab="add">➕ Thêm từ mới</button>
+  <button data-tab="data">📦 Nhập / Xuất dữ liệu</button>
+</nav>
+
+<div class="wrap">
+
+<!-- ============ TRA TỪ ============ -->
+<section id="tab-search">
+  <div class="card">
+    <input id="q" class="search" type="search" placeholder="Gõ Kanji / Hiragana / Katakana / Romaji / Tiếng Việt (có dấu hoặc không dấu) / English…" autocomplete="off" autofocus>
+    <div class="chips" id="catChips"></div>
+    <div class="meta" id="catHintTop" style="margin:4px 2px 0"></div>
+    <div class="meta" id="searchMeta"></div>
+  </div>
+  <div class="card" id="resultCard">
+    <div id="netBox"></div>
+    <div id="results"></div>
+    <div class="row" style="justify-content:center;margin-top:10px"><button id="moreBtn" class="ghost hidden">Xem thêm kết quả</button></div>
+  </div>
+</section>
+
+<!-- ============ THÊM TỪ ============ -->
+<section id="tab-add" class="hidden">
+  <div class="card">
+    <h3>Thêm một từ</h3>
+    <div class="form">
+      <div><label>Japanese (Kanji) *</label><input id="fk" autocomplete="off"></div>
+      <div><label>Romaji *</label><input id="fr" autocomplete="off"></div>
+      <div class="full"><label>Nghĩa tiếng Việt *</label><input id="fv" autocomplete="off"></div>
+      <div><label>English</label><input id="fe" autocomplete="off"></div>
+      <div><label>Category <span style="color:var(--ok)">(tự động)</span></label><input id="fc" list="dlCat" autocomplete="off" placeholder="Để trống = tự gợi ý"><div class="meta" id="catAuto" style="margin:3px 0 0"></div></div>
+      <div><label>Project / Project Group</label><input id="fp" list="dlProj" autocomplete="off"></div>
+      <div><label>Người thêm (Requester)</label><input id="fb" autocomplete="off"></div>
+    </div>
+    <div id="dupBox"></div>
+    <div class="row" style="margin-top:12px">
+      <button id="saveBtn">Lưu từ</button>
+      <button id="clearBtn" class="ghost">Xóa form</button>
+    </div>
+    <div id="addMsg"></div>
+  </div>
+
+  <div class="card">
+    <h3>Dán nhiều từ cùng lúc</h3>
+    <div class="meta" style="margin-top:0">Copy từ sheet Excel theo thứ tự cột <b>Kanji · Romaji · Nghĩa · Category</b> rồi dán vào ô dưới (cột cách nhau bằng Tab hoặc dấu <b>|</b>, có thể kèm dòng tiêu đề). Trang <b>tự lọc bỏ từ đã có trong thư viện</b> và chỉ giữ lại từ mới. Category bỏ trống thì tự gợi ý.</div>
+    <textarea id="bulk" placeholder="Kanji&#9;Romaji&#9;Nghĩa&#9;Category&#10;日本文化 | nihon bunka | văn hóa Nhật Bản | Culture"></textarea>
+    <div class="opts" style="margin-top:8px"><label><input type="checkbox" id="bulkStrict"> Coi <b>cùng Kanji</b> là trùng (loại cả từ khác Romaji). Mặc định chỉ loại khi trùng cả Kanji + Romaji.</label></div>
+    <div id="bulkMsg"></div>
+    <div id="bulkNew"></div>
+    <div id="bulkOut"></div>
+    <div class="row" style="margin-top:12px"><button id="bulkBtn" disabled>Thêm vào thư viện</button><button id="bulkClean" class="ghost hidden">Chỉ giữ từ mới trong ô dán</button></div>
+  </div>
+</section>
+
+<!-- ============ NHẬP / XUẤT ============ -->
+<section id="tab-data" class="hidden">
+  <div class="card">
+    <h3>Nhập từ file Excel / CSV / JSON</h3>
+    <div class="row">
+      <button id="pickBtn">Chọn file…</button>
+      <input type="file" id="file" accept=".xlsx,.xlsm,.xls,.csv,.json" class="hidden">
+      <span class="meta" id="fileName" style="margin:0"></span>
+    </div>
+    <div id="sheetBox" class="hidden">
+      <table class="sheets" id="sheetTable"></table>
+      <div class="opts" style="margin-top:12px">
+        <div style="font-size:13px;color:var(--mute)">Khi gặp từ đã có (cùng Kanji + Romaji):</div>
+        <label><input type="radio" name="dup" value="skip" checked> Bỏ qua (giữ bản đang có)</label>
+        <label><input type="radio" name="dup" value="update"> Cập nhật bằng dữ liệu trong file</label>
+        <div style="font-size:13px;color:var(--mute);margin-top:8px">Chế độ nhập:</div>
+        <label><input type="radio" name="mode" value="merge" checked> Thêm vào dữ liệu hiện có</label>
+        <label><input type="radio" name="mode" value="replace"> Thay thế toàn bộ dữ liệu hiện có</label>
+        <label id="catImportRow" class="hidden"><input type="checkbox" id="catImport" checked> Nhập luôn danh sách Category / Project Group từ sheet <b>03_Category</b></label>
+      </div>
+      <div class="row" style="margin-top:10px"><button id="importBtn">Bắt đầu nhập</button><button id="cancelImport" class="ghost">Hủy</button></div>
+    </div>
+    <div class="bar hidden" id="bar"><div></div></div>
+    <div id="importMsg"></div>
+  </div>
+
+  <div class="card">
+    <h3>Xuất / sao lưu dữ liệu</h3>
+    <div class="meta" style="margin-top:0">Dữ liệu được lưu trong trình duyệt này. Nên xuất file sao lưu định kỳ, và dùng khi chuyển sang máy hoặc trình duyệt khác.</div>
+    <div class="opts"><label><input type="checkbox" id="onlyNew"> Chỉ xuất từ mới thêm/sửa kể từ lần xuất gần nhất (<span id="lastExport">chưa xuất lần nào</span>)</label></div>
+    <div class="row" style="margin-top:8px">
+      <button id="expX">Xuất Excel (.xlsx)</button>
+      <button id="expC" class="ghost">Xuất CSV</button>
+      <button id="expJ" class="ghost">Sao lưu JSON</button>
+    </div>
+    <div id="exportMsg"></div>
+  </div>
+
+  <div class="card" id="syncCard">
+    <h3>Đồng bộ giữa các máy (qua thư mục Google Drive)</h3>
+    <div class="meta" style="margin-top:0">Chọn một file <b>.json nằm trong thư mục Google Drive</b> trên máy. Trang tự ghi từ điển vào file đó sau mỗi thay đổi; máy khác liên kết cùng file sẽ tự gộp từ mới vào. Google Drive lo việc đưa file lên mạng.</div>
+    <div id="syNoSupport"></div>
+    <div class="row" id="syBtns" style="margin-top:8px">
+      <button id="syNew">Tạo file đồng bộ mới…</button>
+      <button id="syPick" class="ghost">Chọn file đã có…</button>
+      <button id="syNow" class="ghost hidden">Đồng bộ ngay</button>
+      <button id="syUnlink" class="ghost hidden">Ngắt liên kết</button>
+    </div>
+    <div class="opts" style="margin-top:8px"><label><input type="checkbox" id="syAuto" checked> Tự động đồng bộ khi mở trang và sau mỗi thay đổi</label></div>
+    <div id="syStatus"></div>
+    <div class="meta">Lần đầu trên máy mới: dùng <b>Chọn file đã có…</b> để lấy toàn bộ từ điển từ file đã đồng bộ. Mỗi lần mở lại trình duyệt, Chrome/Edge sẽ hỏi lại quyền ghi file một lần (bấm nút “Cấp quyền đồng bộ” ở góc trên).</div>
+  </div>
+
+  <div class="card">
+    <h3>Gợi ý nghĩa từ Claude (AI)</h3>
+    <div class="meta" style="margin-top:0">Khi tra từ chưa có trong thư viện, Claude sẽ đề xuất Romaji và nghĩa tiếng Việt. Cần khóa API của bạn (lấy tại console.anthropic.com). Khóa chỉ lưu trong trình duyệt này, không nằm trong file HTML; mỗi lượt gợi ý tính phí rất nhỏ theo tài khoản API của bạn.</div>
+    <div class="form" style="margin-top:8px">
+      <div class="full"><label>API key</label><input id="ckey" type="password" placeholder="sk-ant-…" autocomplete="off"></div>
+      <div><label>Mô hình</label><select id="cmodel"><option value="claude-haiku-5-5">claude-haiku-5-5 (nhanh, rẻ)</option><option value="claude-sonnet-5-5">claude-sonnet-5-5 (chính xác hơn)</option></select></div>
+    </div>
+    <div class="row" style="margin-top:10px"><button id="ckSave">Lưu</button><button id="ckTest" class="ghost">Thử kết nối</button><button id="ckDel" class="ghost">Xóa khóa</button></div>
+    <div id="ckMsg"></div>
+  </div>
+
+  <div class="card">
+    <h3>Quản lý dữ liệu</h3>
+    <div class="row"><button id="wipeBtn" class="danger">Xóa toàn bộ dữ liệu</button><span class="meta" style="margin:0">Không thể hoàn tác. Hãy sao lưu trước.</span></div>
+    <div id="storeInfo" class="meta"></div>
+  </div>
+</section>
+
+</div>
+
+<datalist id="dlCat"></datalist>
+<datalist id="dlProj"></datalist>
+
+<dialog id="dlg">
+  <h3 style="margin-top:0">Sửa từ</h3>
+  <div class="form">
+    <div><label>Japanese *</label><input id="ek"></div>
+    <div><label>Romaji *</label><input id="er"></div>
+    <div class="full"><label>Nghĩa tiếng Việt *</label><input id="ev"></div>
+    <div><label>English</label><input id="ee"></div>
+    <div><label>Category</label><input id="ec" list="dlCat"></div>
+    <div class="full"><label>Project / Project Group</label><input id="ep" list="dlProj"></div>
+  </div>
+  <div id="editMsg"></div>
+  <div class="row" style="margin-top:14px;justify-content:flex-end">
+    <button id="eCancel" class="ghost">Hủy</button><button id="eSave">Lưu</button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+/* ===================== Tiện ích chuẩn hóa ===================== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nowISO = () => new Date().toISOString();
+const clean = v => String(v ?? '').replace(/ /g, ' ').trim();
+// bỏ dấu tiếng Việt, dấu trường âm romaji (ū ō …), đ→d
+const strip = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').normalize('NFC');
+// katakana → hiragana để gõ kiểu nào cũng tìm thấy
+const kata2hira = s => s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+const ASCII = /^[\x00-\x7f]*$/;
+const lowNFKC = s => { s = String(s); return ASCII.test(s) ? s.toLowerCase() : s.normalize('NFKC').toLowerCase(); };
+const nJP = s => { s = lowNFKC(s); return ASCII.test(s) ? s : kata2hira(s); };
+const nLat = s => { s = lowNFKC(s); if (!ASCII.test(s)) s = strip(s); return s.replace(/\s+/g, ' ').trim(); };
+// khóa trùng: Kanji + Romaji (không phân biệt hoa/thường, giống công thức DuplicateCheck trong Excel)
+const dupKey = (k, r) => lowNFKC(clean(k)).replace(/\s+/g, '') + '|' + lowNFKC(clean(r)).replace(/\s+/g, ' ');
+
+/* ===================== IndexedDB ===================== */
+const DB_NAME = 'JapaneseKhamTranDict', DB_VER = 1;
+let idb;
+function openDB() {
+  return new Promise((res, rej) => {
+    const rq = indexedDB.open(DB_NAME, DB_VER);
+    rq.onupgradeneeded = () => {
+      const d = rq.result;
+      if (!d.objectStoreNames.contains('words')) d.createObjectStore('words', {keyPath: 'id', autoIncrement: true});
+      if (!d.objectStoreNames.contains('meta')) d.createObjectStore('meta');
+    };
+    rq.onsuccess = () => res(rq.result);
+    rq.onerror = () => rej(rq.error);
+  });
+}
+const txDone = tx => new Promise((res, rej) => { tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error || new Error('abort')); });
+const reqP = rq => new Promise((res, rej) => { rq.onsuccess = () => res(rq.result); rq.onerror = () => rej(rq.error); });
+async function metaGet(k) { return reqP(idb.transaction('meta').objectStore('meta').get(k)); }
+async function metaSet(k, v) { const tx = idb.transaction('meta', 'readwrite'); tx.objectStore('meta').put(v, k); return txDone(tx); }
+
+/* ===================== Dữ liệu trong bộ nhớ ===================== */
+// Bản ghi lưu: {id,k,r,v,e,c,p,s,src,u,by,qa}
+let WORDS = [];          // mảng bản ghi (kèm khóa tìm kiếm _k,_r,_v,_e)
+let KEYMAP = new Map();  // dupKey -> id
+let CATS = new Set(), PROJS = new Set();
+let lastExport = null;
+
+function decorate(w) {
+  w._k = nJP(w.k || '');
+  w._r = nLat(w.r || '');
+  w._v = nLat(w.v || '');
+  w._e = nLat(w.e || '');
+  return w;
+}
+function registerFacets(w) {
+  if (w.c) CATS.add(w.c);
+  if (w.p) PROJS.add(w.p);
+}
+function stripInternal(w) {          // bỏ khóa tìm kiếm + trường rỗng để file nhẹ và mở nhanh
+  const {_k, _r, _v, _e, ...rest} = w;
+  for (const f in rest) if (rest[f] == null || rest[f] === '') delete rest[f];
+  return rest;
+}
+
+async function loadAll() {
+  const all = await reqP(idb.transaction('words').objectStore('words').getAll());
+  WORDS = all; KEYMAP = new Map(); CATS = new Set(); PROJS = new Set(); resetIdx();
+  for (const w of WORDS) { decorate(w); KEYMAP.set(dupKey(w.k, w.r), w.id); registerFacets(w); }
+  const extra = (await metaGet('facets')) || {c: [], p: []};
+  extra.c.forEach(x => CATS.add(x)); extra.p.forEach(x => PROJS.add(x));
+  lastExport = (await metaGet('lastExport')) || null;
+}
+
+/* ===================== Gợi ý Category tự động ===================== */
+let CATIDX = null, KIDX = null;
+function resetIdx() { CATIDX = null; KIDX = null; }
+function kidx() { if (!KIDX) { KIDX = new Map(); for (const w of WORDS) { if (!KIDX.has(w._k)) KIDX.set(w._k, w); } } return KIDX; }
+const FALLBACK_CAT = 'General';
+// Dựa trên các từ đã có Category: so khớp theo cặp ký tự (bigram) và từng chữ Hán với các từ đã phân loại, Category nào được nhiều điểm nhất thì chọn.
+const CJK1 = /[㐀-鿿]/;
+function grams(t) {
+  const out = [];
+  for (let i = 0; i < t.length - 1; i++) out.push([t.slice(i, i + 2), 1]);
+  for (const ch of t) if (CJK1.test(ch)) out.push([ch, 0.35]);
+  return out;
+}
+function guessCategory(k) {
+  const kk = nJP(clean(k)).replace(/\s+/g, ''); if (!kk) return '';
+  if (!CATIDX) {
+    CATIDX = new Map();
+    for (const w of WORDS) if (w.c) for (const [g] of grams(w._k.replace(/\s+/g, ''))) {
+      let m = CATIDX.get(g); if (!m) CATIDX.set(g, m = new Map()); m.set(w.c, (m.get(w.c) || 0) + 1);
+    }
+  }
+  const vote = new Map();
+  for (const [g, wt] of grams(kk)) { const m = CATIDX.get(g); if (!m) continue;
+    let tot = 0; for (const n of m.values()) tot += n;            // gram xuất hiện ở nhiều nhóm thì kém đặc trưng
+    for (const [c, n] of m) vote.set(c, (vote.get(c) || 0) + wt * n / tot); }
+  let best = '', bs = 0; for (const [c, n] of vote) if (n > bs) { bs = n; best = c; }
+  return bs >= 0.5 ? best : FALLBACK_CAT;
+}
+
+/* ===================== Giao diện chung ===================== */
+function toast(t) {
+  const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d);
+  setTimeout(() => d.remove(), 2600);
+}
+const msg = (el, kind, html) => { $(el).innerHTML = html ? `<div class="msg ${kind}">${html}</div>` : ''; };
+function refreshStat() {
+  $('stat').innerHTML = `<b>${WORDS.length.toLocaleString('vi-VN')}</b> từ trong từ điển`;
+  $('lastExport').textContent = lastExport ? new Date(lastExport).toLocaleString('vi-VN') : 'chưa xuất lần nào';
+}
+function refreshLists() {
+  resetIdx();
+  const opt = s => [...s].sort((a, b) => a.localeCompare(b)).map(x => `<option value="${esc(x)}">`).join('');
+  $('dlCat').innerHTML = opt(CATS); $('dlProj').innerHTML = opt(PROJS);
+  // chip category: nhấp để mở cửa sổ mới liệt kê toàn bộ từ của category đó
+  const cnt = new Map(); for (const w of WORDS) if (w.c) cnt.set(w.c, (cnt.get(w.c) || 0) + 1);
+  const all = [...cnt.entries()].sort((a, b) => b[1] - a[1]);
+  $('catChips').innerHTML = all.map(([c, n]) => `<span class="chip" data-cat="${esc(c)}" title="Mở danh sách từ của ${esc(c)}">${esc(c)} · ${n} ↗</span>`).join('');
+  $('catHintTop').textContent = all.length ? 'Nhấp vào một Category để mở cửa sổ mới với toàn bộ từ trong nhóm đó.' : '';
+}
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+  ['search', 'add', 'data'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== b.dataset.tab));
+  if (b.dataset.tab === 'search') $('q').focus();
+  if (b.dataset.tab === 'add') $('fk').focus();
+});
+
+/* ===================== Tra từ ===================== */
+let catFilter = '', shown = 0, matches = [], lastQ = '';
+const PAGE = 40;
+
+function score(w, q, toks) {
+  // trả về điểm; 0 = không khớp
+  const f = [[w._r, 2.5], [w._v, 2], [w._e, 1.5]];
+  let best = 0;
+  for (const [s, wt] of f) {
+    if (!s) continue;
+    const i = s.indexOf(q);
+    if (i < 0) continue;
+    let sc = s === q ? 100 : i === 0 ? 80 : (s[i - 1] === ' ' ? 60 : 40);
+    sc = sc * wt - Math.min(s.length, 60) * 0.05;
+    if (sc > best) best = sc;
+  }
+  if (best) return best;
+  if (toks.length > 1) {          // nhiều từ: mỗi từ phải xuất hiện đâu đó
+    const hay = w._r + ' ' + w._v + ' ' + w._e;
+    for (const t of toks) if (!hay.includes(t) && !w._k.includes(nJP(t))) return 0;
+    return 20;
+  }
+  return 0;
+}
+
+function runSearch() {
+  const raw = $('q').value;
+  lastQ = raw;
+  const qj = nJP(clean(raw)), ql = nLat(clean(raw));
+  if (!qj) { matches = []; renderResults(); updateNet(); return; }
+  const t0 = performance.now();
+  const toksL = ql.split(' ').filter(Boolean);
+  const out = [];
+  for (const w of WORDS) {
+    if (catFilter && w.c !== catFilter) continue;
+    // Kanji dùng khóa JP; các trường còn lại dùng khóa Latin
+    let sc = 0;
+    const sk = w._k.indexOf(qj);
+    if (sk >= 0) sc = (w._k === qj ? 100 : sk === 0 ? 80 : 40) * 3 - Math.min(w._k.length, 60) * 0.05;
+    const sl = score(w, ql, toksL);
+    if (sl > sc) sc = sl;
+    if (sc > 0) out.push([sc, w]);
+  }
+  out.sort((a, b) => b[0] - a[0]);
+  matches = out.map(x => x[1]);
+  matches._ms = performance.now() - t0;
+  shown = 0; $('results').innerHTML = '';
+  renderResults(true);
+  updateNet();
+}
+
+function hl(text, q) {
+  const t = String(text ?? ''); if (!q) return esc(t);
+  const i = nJP(t).indexOf(nJP(q)); // cùng độ dài sau NFKC trong đa số trường hợp
+  if (i >= 0 && nJP(t).length === t.length) return esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + q.length)) + '</mark>' + esc(t.slice(i + q.length));
+  const j = t.toLowerCase().indexOf(q.toLowerCase());
+  if (j >= 0) return esc(t.slice(0, j)) + '<mark>' + esc(t.slice(j, j + q.length)) + '</mark>' + esc(t.slice(j + q.length));
+  return esc(t);
+}
+
+function renderResults(reset) {
+  const q = clean(lastQ), box = $('results');
+  if (!WORDS.length) {
+    $('searchMeta').textContent = '';
+    box.innerHTML = `<div class="empty">Từ điển đang trống.<br><br>Vào tab <b>Nhập / Xuất dữ liệu</b> để nhập file Excel, hoặc tab <b>Thêm từ mới</b> để thêm trực tiếp.</div>`;
+    $('moreBtn').classList.add('hidden'); return;
+  }
+  if (!q) {
+    $('searchMeta').textContent = '';
+    box.innerHTML = `<div class="empty">Nhập từ cần tra ở ô phía trên.</div>`;
+    $('moreBtn').classList.add('hidden'); return;
+  }
+  if (!matches.length) {
+    $('searchMeta').textContent = '0 kết quả';
+    box.innerHTML = `<div class="empty">Không có từ phù hợp với “${esc(q)}”.<br><br><button id="addFromSearch">➕ Thêm “${esc(q)}” làm từ mới</button></div>`;
+    $('moreBtn').classList.add('hidden');
+    $('addFromSearch').onclick = () => { openTab('add'); $('fk').value = /[^\x00-\x7f]/.test(q) ? q : ''; if (!$('fk').value) $('fr').value = q; checkDup(); };
+    return;
+  }
+  const end = Math.min(shown + PAGE, matches.length);
+  let html = '';
+  for (let i = shown; i < end; i++) {
+    const w = matches[i];
+    html += `<div class="res" data-id="${w.id}">
+      <div><div class="jp">${hl(w.k, q)}</div><div class="ro">${hl(w.r, q)}</div></div>
+      <div><div class="vi">${hl(w.v, q)}</div>${w.e ? `<div class="en">${hl(w.e, q)}</div>` : ''}
+        <div class="tags">${w.c ? `<span class="tag">${esc(w.c)}</span>` : ''}${w.p ? `<span class="tag p">${esc(w.p)}</span>` : ''}${w.src === 'Manual' ? '<span class="tag m">Thêm thủ công</span>' : ''}</div></div>
+      <div class="act"><button class="ghost small" data-act="copy">Copy</button><button class="ghost small" data-act="edit">Sửa</button><button class="ghost small" data-act="del">Xóa</button></div>
+    </div>`;
+  }
+  if (reset) box.innerHTML = html; else box.insertAdjacentHTML('beforeend', html);
+  shown = end;
+  $('searchMeta').textContent = `${matches.length.toLocaleString('vi-VN')} kết quả` + (matches._ms != null ? ` · ${matches._ms.toFixed(0)} ms` : '') + (shown < matches.length ? ` · đang hiện ${shown}` : '');
+  $('moreBtn').classList.toggle('hidden', shown >= matches.length);
+}
+let tq = null;
+$('q').addEventListener('input', () => { clearTimeout(tq); tq = setTimeout(runSearch, 120); });
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter') { clearTimeout(tq); runSearch(); } });
+$('moreBtn').onclick = () => renderResults(false);
+$('catChips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c) openCategoryWindow(c.dataset.cat); });
+$('results').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const id = +b.closest('.res').dataset.id, w = WORDS.find(x => x.id === id); if (!w) return;
+  if (b.dataset.act === 'copy') { const t = `${w.k}\t${w.r}\t${w.v}`; (navigator.clipboard?.writeText(t) || Promise.reject()).then(() => toast('Đã copy: Kanji · Romaji · Nghĩa')).catch(() => toast('Không copy được')); }
+  if (b.dataset.act === 'edit') openEdit(w);
+  if (b.dataset.act === 'del') delWord(w);
+});
+function openTab(t) { document.querySelector(`#tabs button[data-tab="${t}"]`).click(); }
+
+/* ===================== Cửa sổ Category ===================== */
+function openCategoryWindow(cat) {
+  const list = WORDS.filter(w => w.c === cat).map(w => [w.k, w.r, w.v, w.e || '', w.p || '']);
+  list.sort((a, b) => a[1].localeCompare(b[1]));
+  const win = window.open('', '_blank');
+  if (!win) return toast('Trình duyệt đang chặn cửa sổ mới. Hãy cho phép pop-up cho trang này.');
+  const data = JSON.stringify(list).replace(/</g, '\\u003c');
+  const html = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(cat)} – Japanese_KhamTran</title>
+<style>body{font-family:"Segoe UI","Yu Gothic UI",sans-serif;background:#f3f6fb;margin:0;color:#1b2430}header{background:#0078d4;color:#fff;padding:12px 18px;position:sticky;top:0}h1{margin:0;font-size:20px}
+.wrap{max-width:1000px;margin:0 auto;padding:14px}input{width:100%;padding:10px;font-size:16px;border:1px solid #c5d0de;border-radius:6px;box-sizing:border-box}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;margin-top:10px}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #e6ecf3;vertical-align:top}th{background:#e8f1fb;font-size:13px;color:#005a9e}
+td.k{font-size:18px;font-weight:600}td.r,td.e{color:#66758a}.meta{color:#66758a;font-size:13px;margin:8px 2px}button{background:#0078d4;color:#fff;border:0;padding:9px 16px;border-radius:6px;font:inherit;cursor:pointer;margin:10px 6px 0 0}
+button.g{background:#fff;color:#0078d4;border:1px solid #0078d4}mark{background:#ffe58a}</style></head><body>
+<header><h1>Category: ${esc(cat)} · <span id="cnt"></span></h1></header><div class="wrap"><input id="f" placeholder="Lọc trong category này…" autofocus><div class="meta" id="meta"></div>
+<table><thead><tr><th>Japanese</th><th>Romaji</th><th>Nghĩa</th><th>English</th><th>Project</th></tr></thead><tbody id="tb"></tbody></table>
+<button id="more" class="g">Xem thêm</button><button id="csv" class="g">Tải CSV</button></div>
+<script>
+var D=${data},CAT=${JSON.stringify(cat).replace(/</g,'\\u003c')},cur=D,shown=0,PAGE=200;
+function e(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function draw(reset){var tb=document.getElementById('tb');if(reset){tb.innerHTML='';shown=0}
+ var end=Math.min(shown+PAGE,cur.length),h='';for(var i=shown;i<end;i++){var r=cur[i];h+='<tr><td class="k">'+e(r[0])+'</td><td class="r">'+e(r[1])+'</td><td>'+e(r[2])+'</td><td class="e">'+e(r[3])+'</td><td class="e">'+e(r[4])+'</td></tr>'}
+ tb.insertAdjacentHTML('beforeend',h);shown=end;document.getElementById('more').style.display=shown<cur.length?'':'none';
+ document.getElementById('meta').textContent=(cur.length===D.length?'Tất cả ':'Lọc được ')+cur.length+' từ'+(shown<cur.length?' · đang hiện '+shown:'')}
+document.getElementById('cnt').textContent=D.length+' từ';
+document.getElementById('f').oninput=function(){var q=this.value.trim().toLowerCase();cur=!q?D:D.filter(function(r){return r.join(' ').toLowerCase().indexOf(q)>=0});draw(true)};
+document.getElementById('more').onclick=function(){draw(false)};
+document.getElementById('csv').onclick=function(){var t='\\ufeffKanji,Romaji,Nghia,English,Project\\n'+cur.map(function(r){return r.map(function(x){return '"'+String(x).replace(/"/g,'""')+'"'}).join(',')}).join('\\n');
+ var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/csv;charset=utf-8'}));a.download=CAT+'.csv';a.click()};
+draw(true);
+<\/script></body></html>`;
+  win.document.open(); win.document.write(html); win.document.close();
+}
+
+/* ===================== Tra cứu Internet ===================== */
+const HAS_JP = /[぀-ヿ㐀-鿿ｦ-ﾟ]/;
+async function gt(q, sl, tl) {
+  const ctrl = new AbortController(), tm = setTimeout(() => ctrl.abort(), 9000);
+  try {
+    const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&dt=rm&q=${encodeURIComponent(q)}`, {signal: ctrl.signal});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json(); let text = '', srcTr = '', tgtTr = '';
+    for (const sg of (d[0] || [])) { if (sg[0] != null) text += sg[0]; else { if (sg[2]) tgtTr += sg[2]; if (sg[3]) srcTr += sg[3]; } }
+    return {text: text.trim(), srcTr: srcTr.trim(), tgtTr: tgtTr.trim(), lang: d[2] || ''};
+  } catch (e) { throw new Error(e.name === 'AbortError' ? 'quá thời gian chờ' : (e.message || 'lỗi mạng')); }
+  finally { clearTimeout(tm); }
+}
+// Ghép nghĩa từ chính thư viện: cắt từ mới thành các từ đã có (khớp dài nhất trước), nối nghĩa tiếng Việt của từng phần.
+const PARTICLES = new Set(['の', 'は', 'が', 'を', 'に', 'で', 'と', 'も', 'や', 'へ', 'から', 'まで', 'より']);
+function composeFromLibrary(q) {
+  const K = kidx(), t = q.replace(/\s+/g, ''), n = t.length, parts = [];
+  let i = 0, hit = 0, miss = '';
+  const flush = () => { if (miss) { parts.push({t: miss, w: null}); miss = ''; } };
+  while (i < n) {
+    let found = null;
+    for (let L = Math.min(14, n - i); L >= 2; L--) { const w = K.get(nJP(t.slice(i, i + L))); if (w && !(L === n)) { found = [L, w]; break; } }
+    if (found) { flush(); parts.push({t: t.slice(i, i + found[0]), w: found[1]}); i += found[0]; hit++; continue; }
+    const two = t.slice(i, i + 2);
+    if (PARTICLES.has(two)) { flush(); parts.push({t: two, p: true}); i += 2; continue; }
+    if (PARTICLES.has(t[i])) { flush(); parts.push({t: t[i], p: true}); i++; continue; }
+    miss += t[i]; i++;
+  }
+  flush();
+  if (!hit) return null;
+  const words = parts.filter(x => !x.p);
+  return {full: words.every(x => x.w), text: words.map(x => x.w ? x.w.v : `[${x.t}]`).join(' – '),
+          detail: parts.map(x => x.p ? x.t : x.w ? `${x.t}=${x.w.v}` : `${x.t}=?`).join(' + ')};
+}
+// Wiktionary tiếng Việt (do cộng đồng người Việt biên soạn; chỉ có với từ thông dụng)
+async function wikt(q) {
+  const ctrl = new AbortController(), tm = setTimeout(() => ctrl.abort(), 8000);
+  try {
+    const r = await fetch(`https://vi.wiktionary.org/w/api.php?action=query&prop=extracts&explaintext=1&exsectionformat=plain&titles=${encodeURIComponent(q)}&format=json&origin=*`, {signal: ctrl.signal});
+    if (!r.ok) return '';
+    const pg = Object.values((await r.json()).query?.pages || {})[0];
+    if (!pg || !pg.extract) return '';
+    const lines = pg.extract.split('\n').map(x => x.trim());
+    const i = lines.findIndex(x => /^Tiếng Nhật$/.test(x)); if (i < 0) return '';
+    const skip = /^(Danh từ|Động từ|Tính từ|Phó từ|Trợ từ|Thán từ|Đại từ|Từ nguyên|Cách phát âm|Chữ Hán|Tham khảo|Liên kết ngoài|Đồng nghĩa|Trái nghĩa|Từ liên hệ|Dịch|Kanji|Hiragana|Katakana|Phiên âm)/;
+    const out = [];
+    for (let j = i + 1; j < lines.length && out.length < 3; j++) { const x = lines[j]; if (/^Tiếng /.test(x)) break; if (x && !skip.test(x)) out.push(x.replace(/^[\d.\-\*\s]+/, '')); }
+    return out.join('; ').slice(0, 200);
+  } catch (_) { return ''; } finally { clearTimeout(tm); }
+}
+
+// ----- Claude (AI): khóa API do người dùng nhập, lưu trong localStorage của trình duyệt -----
+const lsGet = k => { try { return localStorage.getItem(k) || ''; } catch (_) { return ''; } };
+const lsSet = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); return true; } catch (_) { return false; } };
+async function askClaude(k, ctx) {
+  const key = lsGet('kt_claude_key'); if (!key) return null;
+  const model = lsGet('kt_claude_model') || 'claude-haiku-5-5';
+  const ctrl = new AbortController(), tm = setTimeout(() => ctrl.abort(), 25000);
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', signal: ctrl.signal,
+      headers: {'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true'},
+      body: JSON.stringify({model, max_tokens: 300,
+        system: 'Bạn là chuyên gia dịch thuật Nhật–Việt cho từ điển thuật ngữ nhà máy, môi trường, an toàn, chất lượng. Dịch ra tiếng Việt tự nhiên, ngắn gọn, đúng thuật ngữ chuyên ngành, không dịch word-by-word máy móc. Chỉ trả về đúng một đối tượng JSON, không giải thích.',
+        messages: [{role: 'user', content: `Từ tiếng Nhật: ${k}\nGợi ý ghép từ thư viện cá nhân (ưu tiên giữ cách dùng từ này nếu hợp lý): ${ctx.lib || 'không có'}\nGoogle Dịch: ${ctx.google || 'không có'}\nWiktionary: ${ctx.wiki || 'không có'}\nCategory gợi ý: ${ctx.cat || ''}\n\nTrả về JSON: {"romaji":"Hepburn, viết thường, tách từ bằng dấu cách (ví dụ: daiokishinrui no taiki)","vi":"nghĩa tiếng Việt","en":"nghĩa tiếng Anh ngắn"}`}]})
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d?.error?.message || ('HTTP ' + r.status));
+    const txt = (d.content || []).map(x => x.text || '').join('');
+    const m = txt.match(/\{[\s\S]*\}/); if (!m) throw new Error('phản hồi không đúng định dạng');
+    const o = JSON.parse(m[0]);
+    return {vi: clean(o.vi), en: clean(o.en), romaji: clean(o.romaji)};
+  } catch (e) { throw new Error(e.name === 'AbortError' ? 'quá thời gian chờ' : (e.message || 'lỗi mạng')); }
+  finally { clearTimeout(tm); }
+}
+async function fetchOnline(q) {
+  const cands = []; let claudeNote = lsGet('kt_claude_key') ? '' : 'nokey';
+  const add = (src, text, note) => { text = clean(text); if (text && !cands.some(c => c.text.toLowerCase() === text.toLowerCase())) cands.push({src, text, note: note || ''}); };
+  let k, romaji = '', en = '', google = [], lib = null;
+  if (HAS_JP.test(q)) {
+    k = q;
+    const [vi, e] = await Promise.all([gt(q, 'ja', 'vi').catch(() => null), gt(q, 'ja', 'en').catch(() => null)]);
+    if (!vi && !e) throw new Error('không kết nối được dịch vụ');
+    const viaEn = e && e.text ? await gt(e.text, 'en', 'vi').catch(() => null) : null;
+    romaji = (vi && vi.srcTr) || (e && e.srcTr) || ''; en = e ? e.text : '';
+    google = [viaEn && viaEn.text, vi && vi.text].filter(Boolean);
+  } else {
+    const ja = await gt(q, 'auto', 'ja');
+    if (!ja.text || ja.text.toLowerCase() === q.toLowerCase()) throw new Error('không tìm thấy kết quả');
+    k = ja.text; romaji = ja.tgtTr || '';
+    let v = '';
+    if (ja.lang === 'vi') { v = q; en = (await gt(q, 'vi', 'en').catch(() => ({text: ''}))).text; }
+    else { v = (await gt(q, 'auto', 'vi').catch(() => ({text: ''}))).text; if (ja.lang === 'en') en = q; }
+    google = [v];
+  }
+  lib = composeFromLibrary(k);
+  const wk = await wikt(k);
+  let cl = null;
+  try { cl = await askClaude(k, {lib: lib && lib.detail, google: google.join(' / '), cat: guessCategory(k), wiki: wk}); } catch (e) { claudeNote = e.message; }
+  // Thứ tự: 1) ghép từ thư viện  2) Google Dịch  3) Wiktionary  4) Claude
+  if (lib && lib.full) add('① Ghép từ thư viện của bạn', lib.text, lib.detail);
+  if (google[0] !== undefined) google.forEach((g, i) => add('② Google Dịch' + (HAS_JP.test(q) ? (i === 0 && google.length > 1 ? ' (qua tiếng Anh)' : ' (trực tiếp)') : ''), g));
+  add('③ Wiktionary tiếng Việt', wk);
+  if (cl && cl.vi) add('④ Claude (AI)', cl.vi);
+  if (lib && !lib.full) add('① Ghép một phần từ thư viện (cần bổ sung)', lib.text, lib.detail);
+  if (!cands.length) throw new Error('không có kết quả');
+  if (cl && cl.romaji && (!romaji || !HAS_JP.test(q))) romaji = romaji || cl.romaji;
+  return {k, r: romaji, v: cands[0].text, e: en || (cl && cl.en) || '', cands, claudeNote};
+}
+let netSeq = 0, netTimer = null; const NETCACHE = new Map();
+function updateNet() {
+  clearTimeout(netTimer); netSeq++; $('netBox').innerHTML = '';
+  const q = clean(lastQ); if (!q || !WORDS.length) return;
+  const qj = nJP(q), ql = nLat(q);
+  const exact = matches.some(w => w._k === qj || w._r === ql || w._v === ql);
+  if (!matches.length) {
+    $('netBox').innerHTML = `<div class="msg info">🌐 “${esc(q)}” không có trong thư viện — đang tra cứu trên Internet…</div>`;
+    const my = netSeq; netTimer = setTimeout(() => onlineLookup(q, my), 500);
+  } else if (!exact) {
+    $('netBox').innerHTML = `<button id="netBtn" class="ghost small">🌐 Chưa có từ khớp hoàn toàn — tra thêm trên Internet</button>`;
+    $('netBtn').onclick = () => onlineLookup(q, ++netSeq);
+  }
+}
+async function onlineLookup(q, my) {
+  const box = $('netBox');
+  box.innerHTML = `<div class="msg info">🌐 “${esc(q)}” không có trong thư viện — đang tra cứu trên Internet…</div>`;
+  try {
+    const r = NETCACHE.get(q) || await fetchOnline(q); NETCACHE.set(q, r);
+    if (my !== netSeq) return;
+    const hit = kidx().get(nJP(r.k));
+    const cat = guessCategory(r.k);
+    const cl = (r.cands || []).map((c, i) => `<label style="display:block;margin:4px 0;cursor:pointer"><input type="radio" name="cand" value="${i}" ${i === 0 ? 'checked' : ''} style="width:auto;margin-right:6px">${esc(c.text)} <span class="tag">${esc(c.src)}</span>${c.note ? `<div class="meta" style="margin:0 0 0 22px">${esc(c.note)}</div>` : ''}</label>`).join('');
+    box.innerHTML = `<div style="background:#fffbe6;border:1px dashed #e0a800;border-radius:8px;padding:14px;margin-bottom:10px">
+      <div class="tags" style="margin:0 0 10px"><span class="tag m">🌐 KHÔNG CÓ TRONG THƯ VIỆN · kết quả từ Internet — chỉnh sửa được trước khi lưu</span></div>
+      <div class="form">
+        <div><label>Japanese *</label><input id="nk" value="${esc(r.k)}"></div>
+        <div><label>Romaji *</label><input id="nr" value="${esc(r.r)}" placeholder="(chưa có Romaji — hãy nhập)"></div>
+        <div class="full"><label>Nghĩa tiếng Việt * <span class="meta" style="margin:0">— chọn một gợi ý bên dưới hoặc tự gõ</span></label><input id="nv" value="${esc(r.v)}"></div>
+        <div class="full" style="margin-top:-4px">${cl}</div>
+        <div><label>English</label><input id="ne" value="${esc(r.e)}"></div>
+        <div><label>Category (tự động)</label><input id="nc" list="dlCat" value="${esc(cat)}"></div>
+      </div>
+      ${r.claudeNote === 'nokey' ? '<div class="meta">💡 Chưa có gợi ý từ Claude: thêm API key ở tab “Nhập / Xuất dữ liệu”.</div>' : r.claudeNote ? `<div class="meta" style="color:var(--bad)">Claude không trả lời được: ${esc(r.claudeNote)}</div>` : ''}
+      ${hit ? `<div class="meta">Lưu ý: Kanji này đã có trong thư viện: ${esc(hit.k)} · ${esc(hit.r)} · ${esc(hit.v)}</div>` : ''}
+      <div class="row" style="margin-top:10px"><button id="netSave">💾 Lưu vào thư viện</button><button id="netAdd" class="ghost">Mở trong form Thêm từ</button></div>
+      <div id="netMsg"></div></div>`;
+    box.querySelectorAll('input[name=cand]').forEach(x => x.onchange = () => { $('nv').value = r.cands[+x.value].text; });
+    $('nk').addEventListener('input', () => { if (!$('nc').dataset.m) $('nc').value = guessCategory($('nk').value); });
+    $('nc').addEventListener('input', () => { $('nc').dataset.m = '1'; });
+    $('netAdd').onclick = () => { openTab('add'); setForm($('nk').value, $('nr').value, $('nv').value, $('ne').value); if ($('nc').dataset.m) { $('fc').value = $('nc').value; catManual = true; } };
+    $('netSave').onclick = async () => {
+      const o = {k: $('nk').value, r: $('nr').value, v: $('nv').value, e: $('ne').value, c: $('nc').value};
+      if (!clean(o.k) || !clean(o.r) || !clean(o.v)) return msg('netMsg', 'bad', '⚠ Cần nhập đủ Japanese, Romaji và Nghĩa tiếng Việt.');
+      if (KEYMAP.has(dupKey(o.k, o.r))) return msg('netMsg', 'bad', '⚠ Từ này đã có trong thư viện (cùng Kanji + Romaji).');
+      if (!clean(o.c)) o.c = guessCategory(o.k);
+      const w = makeWord(o);
+      try { await putWords([w]); addToMemory(w); await saveFacets(); } catch (e) { return msg('netMsg', 'bad', 'Lỗi lưu dữ liệu: ' + esc(e.message || e)); }
+      refreshStat(); refreshLists(); runSearch(); toast(`Đã lưu “${w.k}” vào thư viện (Category: ${w.c})`);
+    };
+  } catch (e) {
+    if (my !== netSeq) return;
+    box.innerHTML = `<div class="msg bad">🌐 “${esc(q)}” không có trong thư viện, và không tra được trên Internet (${esc(e.message || e)}). <button class="small ghost" id="netRetry">Thử lại</button></div>`;
+    $('netRetry').onclick = () => onlineLookup(q, ++netSeq);
+  }
+}
+
+/* ===================== Thêm / sửa / xóa ===================== */
+function checkDup() {
+  const k = clean($('fk').value), r = clean($('fr').value);
+  const box = $('dupBox'); box.innerHTML = '';
+  if (!k) return;
+  const same = WORDS.filter(w => w._k === nJP(k)).slice(0, 5);
+  const exact = r && KEYMAP.has(dupKey(k, r));
+  if (exact) box.innerHTML = `<div class="msg bad">⚠ Đã có từ này (cùng Kanji + Romaji). Không thể thêm trùng.</div>`;
+  else if (same.length) box.innerHTML = `<div class="msg warn">Kanji này đã có ${same.length >= 5 ? '5+' : same.length} mục khác Romaji/nghĩa:<br>` + same.map(w => `${esc(w.k)} · ${esc(w.r)} · ${esc(w.v)}`).join('<br>') + `</div>`;
+  return exact;
+}
+['fk', 'fr'].forEach(i => $(i).addEventListener('input', checkDup));
+let catManual = false;
+$('fc').addEventListener('input', () => { catManual = true; $('catAuto').textContent = ''; });
+function autoCat() {
+  if (catManual) return;
+  const k = clean($('fk').value);
+  if (!k) { $('fc').value = ''; $('catAuto').textContent = ''; return; }
+  $('fc').value = guessCategory(k); $('catAuto').textContent = 'Tự động gợi ý — có thể sửa';
+}
+let tAuto = null;
+$('fk').addEventListener('input', () => { clearTimeout(tAuto); tAuto = setTimeout(autoCat, 250); });
+function setForm(k, r, v, e) { clearForm(); $('fk').value = k || ''; $('fr').value = r || ''; $('fv').value = v || ''; $('fe').value = e || ''; autoCat(); checkDup(); (r ? $('fv') : $('fr')).focus(); }
+
+async function putWords(list) {           // lưu nhiều bản ghi theo lô
+  const CH = 5000;
+  for (let i = 0; i < list.length; i += CH) {
+    const tx = idb.transaction('words', 'readwrite'), st = tx.objectStore('words');
+    const part = list.slice(i, i + CH), reqs = [];
+    for (const w of part) reqs.push([w, st.put(stripInternal(w))]);
+    await txDone(tx);
+    for (const [w, rq] of reqs) w.id = rq.result;
+  }
+}
+async function saveFacets() {
+  await metaSet('facets', {c: [...CATS], p: [...PROJS]});
+  scheduleSync();
+}
+function makeWord(o) {
+  return decorate({k: clean(o.k), r: clean(o.r), v: clean(o.v), e: clean(o.e), c: clean(o.c), p: clean(o.p),
+    s: clean(o.s), src: o.src === undefined ? 'Manual' : clean(o.src), u: o.u === undefined ? nowISO() : clean(o.u), by: clean(o.by), qa: clean(o.qa)});
+}
+function addToMemory(w) { WORDS.push(w); KEYMAP.set(dupKey(w.k, w.r), w.id); registerFacets(w); }
+
+$('saveBtn').onclick = async () => {
+  const o = {k: $('fk').value, r: $('fr').value, v: $('fv').value, e: $('fe').value, c: $('fc').value, p: $('fp').value, by: $('fb').value};
+  if (!clean(o.k) || !clean(o.r) || !clean(o.v)) return msg('addMsg', 'bad', '⚠ Cần nhập đủ Japanese, Romaji và Nghĩa tiếng Việt.');
+  if (KEYMAP.has(dupKey(o.k, o.r))) return msg('addMsg', 'bad', '⚠ Từ này đã tồn tại (cùng Kanji + Romaji).');
+  if (!clean(o.c)) o.c = guessCategory(o.k);
+  const w = makeWord(o);
+  try { await putWords([w]); addToMemory(w); await saveFacets(); }
+  catch (e) { return msg('addMsg', 'bad', 'Lỗi lưu dữ liệu: ' + esc(e.message || e)); }
+  const keep = {p: $('fp').value, by: $('fb').value};
+  clearForm(); $('fp').value = keep.p; $('fb').value = keep.by; // giữ lại để nhập liên tục
+  msg('addMsg', 'ok', `✅ Đã lưu “${esc(w.k)}” — Category: <b>${esc(w.c)}</b>.`);
+  refreshStat(); refreshLists(); $('fk').focus();
+};
+function clearForm() { ['fk', 'fr', 'fv', 'fe', 'fc', 'fp'].forEach(i => $(i).value = ''); catManual = false; $('catAuto').textContent = ''; $('dupBox').innerHTML = ''; msg('addMsg', '', ''); }
+$('clearBtn').onclick = clearForm;
+['fk', 'fr', 'fv', 'fe'].forEach((id, i, a) => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); i < a.length - 1 ? $(a[i + 1]).focus() : $('saveBtn').click(); } }));
+
+let bulkPlan = [];
+function bulkReview() {
+  const raw = $('bulk').value.split(/\r?\n/).filter(l => l.trim());
+  bulkPlan = []; $('bulkBtn').disabled = true; $('bulkClean').classList.add('hidden');
+  $('bulkNew').innerHTML = ''; $('bulkOut').innerHTML = ''; msg('bulkMsg', '', '');
+  if (!raw.length) return;
+  const strict = $('bulkStrict').checked, seen = new Set(), seenK = new Set(), K = kidx();
+  for (const line of raw) {
+    const c = (line.includes('\t') ? line.split('\t') : line.split('|')).map(clean);
+    if (!bulkPlan.length && ['kanji', 'japanese'].includes(hKey(c[0]))) continue;     // dòng tiêu đề
+    const row = {line, k: c[0] || '', r: c[1] || '', v: c[2] || '', c: c[3] || '', auto: false, st: 'new', note: ''};
+    if (!row.k || !row.r || !row.v) { row.st = 'bad'; row.note = 'Thiếu Kanji / Romaji / Nghĩa'; }
+    else {
+      const key = dupKey(row.k, row.r), kk = nJP(row.k);
+      const wid = KEYMAP.get(key), hitK = K.get(kk);
+      if (wid != null) { const w = WORDS.find(x => x.id === wid); row.st = 'libdup'; row.note = 'Đã có trong thư viện' + (w ? ` — ${w.v}` : ''); }
+      else if (strict && hitK) { row.st = 'libdup'; row.note = `Kanji đã có trong thư viện (${hitK.r}) — ${hitK.v}`; }
+      else if (seen.has(key) || (strict && seenK.has(kk))) { row.st = 'pastedup'; row.note = 'Trùng với một dòng khác trong dữ liệu vừa dán'; }
+      else {
+        seen.add(key); seenK.add(kk);
+        if (hitK) row.note = `Lưu ý: Kanji này đã có (${hitK.r}) — ${hitK.v}`;
+        if (!row.c) { row.c = guessCategory(row.k); row.auto = true; }
+      }
+    }
+    bulkPlan.push(row);
+  }
+  const n = {new: 0, libdup: 0, pastedup: 0, bad: 0}; bulkPlan.forEach(r => n[r.st]++);
+  msg('bulkMsg', n.new ? 'ok' : 'warn',
+    `Đã đọc <b>${bulkPlan.length}</b> dòng: <b>${n.new} từ mới</b> · ${n.libdup} trùng thư viện · ${n.pastedup} trùng trong dữ liệu dán · ${n.bad} thiếu dữ liệu.` + (n.new ? '' : ' Không có từ mới để thêm.'));
+  const news = bulkPlan.filter(r => r.st === 'new');
+  if (news.length) {
+    $('bulkNew').innerHTML = `<div style="font-weight:600;margin:12px 0 4px;color:var(--ok)">✅ Từ mới sẽ được thêm (${news.length})</div><div style="overflow-x:auto"><table class="sheets"><tr><th><input type="checkbox" id="bkAll" checked style="width:auto"></th><th>Kanji</th><th>Romaji</th><th>Nghĩa</th><th>Category</th></tr>` +
+      bulkPlan.map((r, i) => r.st !== 'new' ? '' : `<tr><td><input type="checkbox" class="bk" data-i="${i}" checked style="width:auto"></td><td>${esc(r.k)}</td><td>${esc(r.r)}</td><td>${esc(r.v)}${r.note ? `<div class="meta" style="margin:2px 0 0;color:var(--warn)">${esc(r.note)}</div>` : ''}</td><td>${esc(r.c)}${r.auto ? ' <small style="color:var(--ok)">(tự động)</small>' : ''}</td></tr>`).join('') + '</table></div>';
+    $('bkAll').onchange = e => document.querySelectorAll('.bk').forEach(x => { x.checked = e.target.checked; updBulkBtn(); });
+    document.querySelectorAll('.bk').forEach(x => x.onchange = updBulkBtn);
+    updBulkBtn();
+  }
+  const out = bulkPlan.filter(r => r.st !== 'new');
+  if (out.length) {
+    const lab = {libdup: 'Trùng thư viện', pastedup: 'Trùng trong dữ liệu dán', bad: 'Thiếu dữ liệu'};
+    $('bulkOut').innerHTML = `<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--bad);font-weight:600">🚫 Đã loại ${out.length} dòng (bấm để xem)</summary><div style="overflow-x:auto"><table class="sheets"><tr><th>Kanji</th><th>Romaji</th><th>Nghĩa</th><th>Lý do loại</th></tr>` +
+      out.map(r => `<tr><td>${esc(r.k)}</td><td>${esc(r.r)}</td><td>${esc(r.v)}</td><td><span class="tag" style="background:#fde7ea;color:var(--bad)">${lab[r.st]}</span> <small>${esc(r.note)}</small></td></tr>`).join('') + '</table></div></details>';
+    $('bulkClean').classList.toggle('hidden', !news.length);
+  }
+}
+function updBulkBtn() {
+  const n = document.querySelectorAll('.bk:checked').length;
+  $('bulkBtn').disabled = !n; $('bulkBtn').textContent = n ? `Thêm ${n} từ mới vào thư viện` : 'Thêm vào thư viện';
+}
+let tBulk = null;
+$('bulk').addEventListener('input', () => { clearTimeout(tBulk); tBulk = setTimeout(bulkReview, 400); });
+$('bulkStrict').addEventListener('change', bulkReview);
+$('bulkClean').onclick = () => { $('bulk').value = bulkPlan.filter(r => r.st === 'new').map(r => r.line).join('\n'); bulkReview(); };
+$('bulkBtn').onclick = async () => {
+  const picks = [...document.querySelectorAll('.bk:checked')].map(x => bulkPlan[+x.dataset.i]);
+  if (!picks.length) return;
+  const skipped = bulkPlan.length - picks.length;
+  const add = picks.map(r => makeWord({k: r.k, r: r.r, v: r.v, c: r.c}));
+  try { await putWords(add); add.forEach(addToMemory); await saveFacets(); }
+  catch (e) { return msg('bulkMsg', 'bad', 'Lỗi lưu: ' + esc(e.message || e)); }
+  $('bulk').value = ''; bulkReview();
+  msg('bulkMsg', 'ok', `✅ Đã thêm <b>${add.length}</b> từ mới vào thư viện (Kanji · Romaji · Nghĩa · Category). Đã loại ${skipped} dòng trùng/thiếu dữ liệu.`);
+  refreshStat(); refreshLists();
+};
+
+const dlg = $('dlg'); let editing = null;
+function openEdit(w) {
+  editing = w; msg('editMsg', '', '');
+  $('ek').value = w.k; $('er').value = w.r; $('ev').value = w.v; $('ee').value = w.e || ''; $('ec').value = w.c || ''; $('ep').value = w.p || '';
+  dlg.showModal();
+}
+$('eCancel').onclick = () => dlg.close();
+$('eSave').onclick = async () => {
+  const w = editing; if (!w) return;
+  const n = {k: clean($('ek').value), r: clean($('er').value), v: clean($('ev').value), e: clean($('ee').value), c: clean($('ec').value), p: clean($('ep').value)};
+  if (!n.k || !n.r || !n.v) return msg('editMsg', 'bad', '⚠ Cần nhập đủ Japanese, Romaji và Nghĩa.');
+  const oldKey = dupKey(w.k, w.r), newKey = dupKey(n.k, n.r);
+  if (newKey !== oldKey && KEYMAP.has(newKey)) return msg('editMsg', 'bad', '⚠ Đã có từ khác trùng Kanji + Romaji này.');
+  Object.assign(w, n, {u: nowISO()}); decorate(w);
+  try { await putWords([w]); } catch (e) { return msg('editMsg', 'bad', 'Lỗi lưu: ' + esc(e.message || e)); }
+  KEYMAP.delete(oldKey); KEYMAP.set(newKey, w.id); registerFacets(w);
+  if (newKey !== oldKey) tombstone(oldKey);
+  await saveFacets();
+  dlg.close(); toast('Đã cập nhật'); refreshLists(); runSearch();
+};
+async function delWord(w) {
+  if (!confirm(`Xóa từ “${w.k}” (${w.v})?`)) return;
+  const tx = idb.transaction('words', 'readwrite'); tx.objectStore('words').delete(w.id); await txDone(tx);
+  WORDS.splice(WORDS.indexOf(w), 1); KEYMAP.delete(dupKey(w.k, w.r));
+  tombstone(dupKey(w.k, w.r)); scheduleSync();
+  toast('Đã xóa'); refreshStat(); runSearch();
+}
+
+/* ===================== Nhập từ file ===================== */
+// tên cột chấp nhận (không phân biệt hoa/thường, bỏ dấu)
+const ALIAS = {
+  k: ['kanji', 'japanese', 'nihongo', 'jp', 'tiengnhat', 'tu'],
+  r: ['romaji', 'phienam'],
+  v: ['nghia', 'vietnamese', 'vi', 'tiengviet'],
+  e: ['english', 'en', 'tienganh'],
+  c: ['category', 'nhom'],
+  p: ['project', 'projectgroup'],
+  s: ['status'], src: ['source', 'sourcetype'], u: ['updateddata', 'updateddate', 'updatedat'], by: ['updatedby', 'requester'], qa: ['qastatus']
+};
+const hKey = s => strip(String(s ?? '').toLowerCase()).replace(/[^a-z0-9]/g, '');
+function mapHeader(row) {                       // trả về {field: colIndex} hoặc null
+  const m = {};
+  row.forEach((h, i) => {
+    const key = hKey(h); if (!key) return;
+    for (const f in ALIAS) if (ALIAS[f].includes(key)) { if (!(f in m)) m[f] = i; else if (f === 'p' && !('p2' in m)) m.p2 = i; break; }
+  });
+  return ('k' in m && 'r' in m && 'v' in m) ? m : null;
+}
+function findHeader(rows) {
+  for (let i = 0; i < Math.min(rows.length, 6); i++) { const m = mapHeader(rows[i] || []); if (m) return {row: i, map: m}; }
+  return null;
+}
+
+let pendingFile = null, sheetInfo = [];     // {name, header:{row,map}|null, rows}
+$('pickBtn').onclick = () => $('file').click();
+$('cancelImport').onclick = () => { $('sheetBox').classList.add('hidden'); pendingFile = null; $('fileName').textContent = ''; msg('importMsg', '', ''); };
+$('file').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  msg('importMsg', 'info', 'Đang đọc cấu trúc file…'); $('sheetBox').classList.add('hidden');
+  $('fileName').textContent = f.name;
+  try {
+    const ext = f.name.split('.').pop().toLowerCase();
+    if (ext === 'json') return await importJSON(f);
+    if (typeof XLSX === 'undefined') return msg('importMsg', 'bad', 'Chưa tải được thư viện đọc Excel (cần Internet lần đầu để tải SheetJS). Hãy kiểm tra kết nối rồi mở lại trang.');
+    const buf = await f.arrayBuffer();
+    const wbPreview = XLSX.read(buf, {type: 'array', sheetRows: 8, dense: false});
+    sheetInfo = wbPreview.SheetNames.map(name => {
+      const rows = XLSX.utils.sheet_to_json(wbPreview.Sheets[name], {header: 1, defval: ''});
+      const full = wbPreview.Sheets[name]['!fullref'] || wbPreview.Sheets[name]['!ref'];
+      let total = 0; try { if (full) total = XLSX.utils.decode_range(full).e.r; } catch (_) {}
+      return {name, header: findHeader(rows), rows: total, cats: /category/i.test(name) && rows.some(r => r.some(c => hKey(c) === 'categorycode'))};
+    });
+    pendingFile = {buf, ext};
+    showSheetChooser();
+  } catch (err) { msg('importMsg', 'bad', 'Không đọc được file: ' + esc(err.message || err)); }
+});
+
+function showSheetChooser() {
+  const ds = sheetInfo.filter(s => s.header);
+  if (!ds.length) { return msg('importMsg', 'bad', 'Không tìm thấy sheet nào có đủ các cột <b>Kanji (hoặc Japanese)</b>, <b>Romaji</b>, <b>Nghĩa (hoặc Vietnamese)</b>.'); }
+  // chọn sẵn: sheet nguồn chính (SourceJapan / Approved…), nếu không có thì sheet đầu tiên
+  const pref = ds.filter(s => /sourcejapan|approved/i.test(s.name) && !/clean|pq_/i.test(s.name));
+  const pre = new Set((pref.length ? pref : [ds[0]]).map(s => s.name));
+  $('sheetTable').innerHTML = `<tr><th></th><th>Sheet</th><th>Số dòng</th><th>Cột nhận diện</th></tr>` + ds.map(s =>
+    `<tr><td><input type="checkbox" class="shk" value="${esc(s.name)}" ${pre.has(s.name) ? 'checked' : ''}></td><td>${esc(s.name)}</td><td>${s.rows ? s.rows.toLocaleString('vi-VN') : '?'}</td><td>${Object.keys(s.header.map).filter(x => x !== 'p2').join(', ')}</td></tr>`).join('');
+  const cs = sheetInfo.find(s => s.cats);
+  $('catImportRow').classList.toggle('hidden', !cs);
+  $('sheetBox').classList.remove('hidden');
+  msg('importMsg', 'info', `Tìm thấy ${ds.length} sheet có dữ liệu từ vựng. Chọn sheet cần nhập rồi bấm “Bắt đầu nhập”. <br><small>Gợi ý: các sheet 08_AI_Source, 18_PQ_SourceJapan_Clean… là bản sao của 01_SourceJapan, không cần chọn cùng lúc.</small>`);
+}
+
+const tick = () => new Promise(r => setTimeout(r, 0));
+function setBar(p) { $('bar').classList.remove('hidden'); $('bar').firstElementChild.style.width = Math.round(p * 100) + '%'; }
+
+$('importBtn').onclick = async () => {
+  const chosen = [...document.querySelectorAll('.shk:checked')].map(x => x.value);
+  if (!chosen.length) return msg('importMsg', 'warn', 'Hãy chọn ít nhất một sheet.');
+  const dupMode = document.querySelector('input[name=dup]:checked').value, mode = document.querySelector('input[name=mode]:checked').value;
+  if (mode === 'replace' && !confirm('Thay thế TOÀN BỘ dữ liệu hiện có bằng dữ liệu từ file?')) return;
+  $('importBtn').disabled = true;
+  try {
+    msg('importMsg', 'info', 'Đang đọc dữ liệu từ file (file lớn có thể mất vài giây)…'); setBar(0.05); await tick();
+    const wantCat = !$('catImportRow').classList.contains('hidden') && $('catImport').checked;
+    const names = chosen.concat(wantCat ? [sheetInfo.find(s => s.cats).name] : []);
+    const wb = XLSX.read(pendingFile.buf, {type: 'array', sheets: names, dense: true, cellDates: true});
+    setBar(0.25); await tick();
+
+    if (mode === 'replace') {
+      const tx = idb.transaction('words', 'readwrite'); tx.objectStore('words').clear(); await txDone(tx);
+      WORDS = []; KEYMAP = new Map(); CATS = new Set(); PROJS = new Set();
+    }
+    const stats = {added: 0, updated: 0, skipped: 0, bad: 0};
+    const toPut = [];
+    const byKey = new Map();                    // bản ghi đã gom trong lần nhập này
+    const idMap = dupMode === 'update' ? new Map(WORDS.map(w => [w.id, w])) : null;
+    for (let si = 0; si < chosen.length; si++) {
+      const info = sheetInfo.find(s => s.name === chosen[si]);
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[chosen[si]], {header: 1, defval: '', raw: true});
+      const hdr = findHeader(rows) || info.header, m = hdr.map;
+      const get = (r, f) => f in m ? (r[m[f]] || (f === 'p' && 'p2' in m ? r[m.p2] : '')) : '';
+      for (let i = hdr.row + 1; i < rows.length; i++) {
+        const r = rows[i];
+        const k = clean(get(r, 'k')), ro = clean(get(r, 'r')), v = clean(get(r, 'v'));
+        if (!k && !ro && !v) continue;
+        if (!k || !ro || !v) { stats.bad++; continue; }
+        const key = dupKey(k, ro);
+        const o = {k, r: ro, v, e: get(r, 'e'), c: get(r, 'c'), p: get(r, 'p'), s: clean(get(r, 's')), src: clean(get(r, 'src')),
+          by: get(r, 'by'), qa: clean(get(r, 'qa'))};
+        const ud = get(r, 'u'); o.u = ud instanceof Date ? ud.toISOString() : (ud ? String(ud) : '');   // từ nhập từ Excel không tính là “mới thêm”
+        const mem = byKey.get(key);
+        if (mem) {                              // trùng trong chính file / giữa các sheet
+          if (dupMode === 'update') { Object.assign(mem, makeWord(o), {id: mem.id}); stats.updated++; } else stats.skipped++;
+          continue;
+        }
+        const existId = KEYMAP.get(key);
+        if (existId != null) {
+          if (dupMode === 'update') {
+            const old = idMap.get(existId);
+            if (old) { Object.assign(old, makeWord(o), {id: existId}); byKey.set(key, old); toPut.push(old); stats.updated++; }
+          } else stats.skipped++;
+          continue;
+        }
+        const w = makeWord(o); byKey.set(key, w); toPut.push(w); stats.added++;
+      }
+      setBar(0.25 + 0.3 * (si + 1) / chosen.length); await tick();
+    }
+    // lưu theo lô với tiến độ
+    const CH = 4000;
+    for (let i = 0; i < toPut.length; i += CH) {
+      const part = toPut.slice(i, i + CH);
+      await putWords(part); setBar(0.55 + 0.4 * Math.min(1, (i + CH) / toPut.length)); await tick();
+    }
+    // cập nhật bộ nhớ: các từ mới chưa có trong WORDS
+    const inMem = new Set(WORDS.map(w => w.id));
+    for (const w of toPut) { if (!inMem.has(w.id)) WORDS.push(w); KEYMAP.set(dupKey(w.k, w.r), w.id); registerFacets(w); }
+
+    if (wantCat) importCategories(wb, sheetInfo.find(s => s.cats).name);
+    await saveFacets(); setBar(1);
+    refreshStat(); refreshLists(); runSearch();
+    msg('importMsg', 'ok', `✅ Hoàn tất. Thêm mới: <b>${stats.added.toLocaleString('vi-VN')}</b> · cập nhật: ${stats.updated.toLocaleString('vi-VN')} · bỏ qua trùng: ${stats.skipped.toLocaleString('vi-VN')} · dòng thiếu dữ liệu: ${stats.bad.toLocaleString('vi-VN')}<br>Tổng số từ hiện tại: <b>${WORDS.length.toLocaleString('vi-VN')}</b>`);
+    $('sheetBox').classList.add('hidden'); pendingFile = null;
+    setTimeout(() => $('bar').classList.add('hidden'), 1200);
+  } catch (err) {
+    console.error(err); msg('importMsg', 'bad', 'Lỗi khi nhập: ' + esc(err.message || err)); await loadAll().catch(() => {}); refreshStat(); refreshLists();
+  } finally { $('importBtn').disabled = false; }
+};
+
+function importCategories(wb, name) {
+  const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], {header: 1, defval: ''});
+  let h = rows.findIndex(r => r.some(c => hKey(c) === 'categorycode')); if (h < 0) return;
+  const hr = rows[h], iCode = hr.findIndex(c => hKey(c) === 'categorycode'), iName = hr.findIndex(c => hKey(c) === 'categoryname');
+  const iPG = hr.findIndex(c => hKey(c) === 'projectgrouplist');
+  for (let i = h + 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (clean(r[iCode])) CATS.add(clean(r[iCode]));
+    if (iName >= 0 && clean(r[iName])) PROJS.add(clean(r[iName]));   // tên nhóm dự án
+    if (iPG >= 0 && clean(r[iPG])) PROJS.add(clean(r[iPG]));
+  }
+}
+
+async function importJSON(f) {
+  const data = JSON.parse(await f.text());
+  const arr = Array.isArray(data) ? data : (data.words || []);
+  const list = [], seen = new Set(); let skip = 0;
+  for (const o of arr) {
+    const k = o.k ?? o.Kanji ?? o.Japanese, r = o.r ?? o.Romaji, v = o.v ?? o['Nghĩa'] ?? o.Vietnamese;
+    if (!clean(k) || !clean(r) || !clean(v)) { skip++; continue; }
+    const key = dupKey(k, r); if (KEYMAP.has(key) || seen.has(key)) { skip++; continue; } seen.add(key);
+    list.push(makeWord({k, r, v, e: o.e ?? o.English, c: o.c ?? o.Category, p: o.p ?? o.Project, s: o.s ?? o.Status, src: o.src ?? o.Source ?? '', u: o.u ?? o.UpdatedData ?? '', by: o.by ?? o.UpdatedBy, qa: o.qa ?? o.QA_Status}));
+  }
+  await putWords(list); list.forEach(addToMemory); await saveFacets();
+  refreshStat(); refreshLists(); runSearch();
+  msg('importMsg', 'ok', `✅ Đã nhập <b>${list.length.toLocaleString('vi-VN')}</b> từ từ JSON · bỏ qua: ${skip.toLocaleString('vi-VN')}`);
+}
+
+/* ===================== Xuất dữ liệu ===================== */
+function exportRows() {
+  let src = WORDS;
+  if ($('onlyNew').checked && lastExport) src = WORDS.filter(w => (w.u || '') > lastExport);
+  return src;
+}
+const toRec = w => ({Kanji: w.k, Romaji: w.r, 'Nghĩa': w.v, English: w.e || '', Category: w.c || '', Project: w.p || '', Status: w.s || '', Source: w.src || '', UpdatedData: w.u || '', UpdatedBy: w.by || '', QA_Status: w.qa || ''});
+function stamp() { const d = new Date(), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`; }
+function download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+async function markExported() { lastExport = nowISO(); await metaSet('lastExport', lastExport); refreshStat(); }
+async function doExport(kind) {
+  const rows = exportRows();
+  if (!rows.length) return msg('exportMsg', 'warn', 'Không có từ nào để xuất.');
+  msg('exportMsg', 'info', 'Đang tạo file…'); await tick();
+  try {
+    const name = `Dictionary_${stamp()}`;
+    if (kind === 'json') {
+      download(new Blob([JSON.stringify({version: 1, exported: nowISO(), words: rows.map(stripInternal)})], {type: 'application/json'}), name + '.json');
+    } else {
+      if (typeof XLSX === 'undefined') return msg('exportMsg', 'bad', 'Chưa tải được thư viện Excel. Hãy dùng “Sao lưu JSON” hoặc kết nối Internet.');
+      const ws = XLSX.utils.json_to_sheet(rows.map(toRec), {header: ['Kanji', 'Romaji', 'Nghĩa', 'English', 'Category', 'Project', 'Status', 'Source', 'UpdatedData', 'UpdatedBy', 'QA_Status']});
+      if (kind === 'csv') download(new Blob(['﻿' + XLSX.utils.sheet_to_csv(ws)], {type: 'text/csv;charset=utf-8'}), name + '.csv');
+      else { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, '01_SourceJapan'); XLSX.writeFile(wb, name + '.xlsx'); }
+    }
+    await markExported();
+    msg('exportMsg', 'ok', `✅ Đã xuất ${rows.length.toLocaleString('vi-VN')} từ.`);
+  } catch (e) { msg('exportMsg', 'bad', 'Lỗi xuất file: ' + esc(e.message || e)); }
+}
+$('expX').onclick = () => doExport('xlsx'); $('expC').onclick = () => doExport('csv'); $('expJ').onclick = () => doExport('json');
+
+$('wipeBtn').onclick = async () => {
+  if (!confirm('Xóa TOÀN BỘ từ điển trong trình duyệt này? Không thể hoàn tác.' + (syHandle ? '\nLiên kết đồng bộ cũng sẽ được ngắt (file đồng bộ không bị xóa).' : ''))) return;
+  if (prompt('Gõ XOA để xác nhận') !== 'XOA') return;
+  const tx = idb.transaction(['words', 'meta'], 'readwrite'); tx.objectStore('words').clear(); tx.objectStore('meta').clear(); await txDone(tx);
+  WORDS = []; KEYMAP = new Map(); CATS = new Set(); PROJS = new Set(); lastExport = null; syHandle = null; TOMB = {}; syUI();
+  refreshStat(); refreshLists(); runSearch(); toast('Đã xóa toàn bộ dữ liệu');
+};
+
+/* ===================== Đồng bộ file (thư mục Google Drive trên máy) ===================== */
+const FSA = 'showSaveFilePicker' in window && 'showOpenFilePicker' in window;
+let syHandle = null, syBusy = false, syAgain = false, syTimer = null, syLast = null, TOMB = {};   // TOMB: khóa từ đã xóa -> thời điểm xóa
+const JSON_TYPES = [{description: 'Từ điển (JSON)', accept: {'application/json': ['.json']}}];
+const syAuto = () => $('syAuto').checked;
+function tombstone(key) { TOMB[key] = nowISO(); metaSet('tomb', TOMB).catch(() => {}); }
+async function syPerm(ask) {
+  if (!syHandle) return 'none';
+  try { const o = {mode: 'readwrite'}; let p = await syHandle.queryPermission(o); if (p !== 'granted' && ask) p = await syHandle.requestPermission(o); return p; }
+  catch (_) { return 'denied'; }
+}
+function syUI(state, x) {
+  const linked = !!syHandle;
+  $('syNew').classList.toggle('hidden', linked || !FSA); $('syPick').classList.toggle('hidden', linked || !FSA);
+  $('syNow').classList.toggle('hidden', !linked); $('syUnlink').classList.toggle('hidden', !linked);
+  $('syBadge').classList.toggle('hidden', state !== 'needperm');
+  if (!FSA) { $('syNoSupport').innerHTML = '<div class="msg warn">Trình duyệt này không hỗ trợ ghi file trực tiếp. Hãy dùng Chrome hoặc Edge bản mới.</div>'; $('syStatus').innerHTML = ''; return; }
+  const last = syLast ? new Date(syLast).toLocaleString('vi-VN') : '';
+  if (!linked) msg('syStatus', 'info', 'Chưa liên kết file đồng bộ.');
+  else if (state === 'busy') msg('syStatus', 'info', '🔄 Đang đồng bộ…');
+  else if (state === 'needperm') msg('syStatus', 'warn', `Đã liên kết với <b>${esc(syHandle.name)}</b> nhưng cần cấp quyền ghi file: bấm “Cấp quyền đồng bộ” hoặc “Đồng bộ ngay”.`);
+  else if (state === 'error') msg('syStatus', 'bad', 'Lỗi đồng bộ: ' + esc(x && x.message || x) + '<br><small>Dữ liệu trên máy này vẫn an toàn, file đồng bộ không bị ghi đè.</small>');
+  else msg('syStatus', 'ok', `✅ Đã liên kết <b>${esc(syHandle.name)}</b>` + (last ? ` · đồng bộ lần cuối ${last}` : '') + (x && (x.added || x.upd || x.removed) ? `<br>Vừa nhận từ file: ${x.added} từ mới · ${x.upd} cập nhật · ${x.removed} xóa` : ''));
+}
+async function mergeRemote(remote) {
+  const LK = new Map(); for (const w of WORDS) LK.set(dupKey(w.k, w.r), w);
+  const put = [], del = []; let write = false, added = 0, upd = 0, removed = 0;
+  const rt = remote.tomb || {};
+  for (const [key, t] of Object.entries(rt)) {                       // từ đã bị xóa ở nơi khác
+    const w = LK.get(key);
+    if (w && (w.u || '') < t) { del.push(w); LK.delete(key); removed++; }
+    if (!TOMB[key] || TOMB[key] < t) TOMB[key] = t;
+  }
+  for (const key in TOMB) if (!rt[key] || rt[key] < TOMB[key]) { write = true; break; }
+  const rk = new Set();
+  for (const rw of remote.words) {
+    const k = clean(rw.k), r = clean(rw.r), v = clean(rw.v); if (!k || !r || !v) continue;
+    const key = dupKey(k, r); rk.add(key);
+    const ru = clean(rw.u);
+    if (TOMB[key] && TOMB[key] > ru) { write = true; continue; }     // máy này đã xóa từ này
+    const w = LK.get(key);
+    if (!w) { const nw = makeWord({k, r, v, e: rw.e, c: rw.c, p: rw.p, s: rw.s, src: rw.src ?? '', u: ru, by: rw.by, qa: rw.qa}); put.push(nw); LK.set(key, nw); added++; }
+    else { const lu = w.u || ''; if (ru > lu) { Object.assign(w, makeWord({k, r, v, e: rw.e, c: rw.c, p: rw.p, s: rw.s, src: rw.src ?? '', u: ru, by: rw.by, qa: rw.qa}), {id: w.id}); put.push(w); upd++; } else if (lu > ru) write = true; }
+  }
+  if (!write) for (const key of LK.keys()) if (!rk.has(key)) { write = true; break; }   // có từ chỉ nằm ở máy này
+  if (del.length) { const tx = idb.transaction('words', 'readwrite'); del.forEach(w => tx.objectStore('words').delete(w.id)); await txDone(tx); }
+  if (put.length) await putWords(put);
+  await metaSet('tomb', TOMB);
+  return {added, upd, removed, write, reload: !!(put.length || del.length)};
+}
+async function writeSync() {
+  const words = WORDS.map(w => { const o = stripInternal(w); delete o.id; return o; });
+  const ws = await syHandle.createWritable();
+  await ws.write(JSON.stringify({app: 'KhamTranDict', version: 2, saved: nowISO(), words, tomb: TOMB}));
+  await ws.close();
+}
+async function syncNow(ask) {
+  if (!syHandle) return;
+  if (syBusy) { syAgain = true; return; }
+  const p = await syPerm(ask);
+  if (p !== 'granted') return syUI('needperm');
+  syBusy = true; syUI('busy');
+  try {
+    const txt = await (await syHandle.getFile()).text();
+    let remote = {words: [], tomb: {}};
+    if (txt.trim()) { const d = JSON.parse(txt); remote.words = Array.isArray(d) ? d : (d.words || []); remote.tomb = d.tomb || {}; }   // file hỏng -> lỗi, không ghi đè
+    const res = await mergeRemote(remote);
+    if (res.reload) { await loadAll(); await saveFacets_noSync(); refreshStat(); refreshLists(); runSearch(); }
+    if (res.write || !txt.trim()) await writeSync();
+    syLast = nowISO(); await metaSet('syncLast', syLast); syUI('ok', res);
+  } catch (e) { console.error(e); syUI('error', e); }
+  finally { syBusy = false; if (syAgain) { syAgain = false; scheduleSync(300); } }
+}
+async function saveFacets_noSync() { await metaSet('facets', {c: [...CATS], p: [...PROJS]}); }
+function scheduleSync(delay) { if (!syHandle || !syAuto()) return; clearTimeout(syTimer); syTimer = setTimeout(() => syncNow(false), delay == null ? 4000 : delay); }
+async function syLink(create) {
+  try {
+    const h = create ? await showSaveFilePicker({suggestedName: 'KhamTran_Dictionary_Sync.json', types: JSON_TYPES}) : (await showOpenFilePicker({types: JSON_TYPES}))[0];
+    syHandle = h; await metaSet('syncHandle', h).catch(() => {}); await syncNow(true);
+  } catch (e) { if (e.name !== 'AbortError') syUI('error', e); }
+}
+$('syNew').onclick = () => syLink(true); $('syPick').onclick = () => syLink(false);
+$('syNow').onclick = () => syncNow(true); $('syBadge').onclick = () => syncNow(true);
+$('syUnlink').onclick = async () => { syHandle = null; await metaSet('syncHandle', null); syUI(); toast('Đã ngắt liên kết (file đồng bộ vẫn giữ nguyên)'); };
+$('syAuto').onchange = () => metaSet('syncAuto', $('syAuto').checked);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && syHandle && syAuto()) scheduleSync(600); });
+async function initSync() {
+  syHandle = (await metaGet('syncHandle')) || null; TOMB = (await metaGet('tomb')) || {}; syLast = (await metaGet('syncLast')) || null;
+  $('syAuto').checked = (await metaGet('syncAuto')) !== false;
+  syUI(); if (syHandle && syAuto()) syncNow(false);
+}
+
+/* ===================== Cài đặt Claude ===================== */
+$('ckey').value = lsGet('kt_claude_key'); $('cmodel').value = lsGet('kt_claude_model') || 'claude-haiku-5-5';
+$('ckSave').onclick = () => {
+  const ok = lsSet('kt_claude_key', $('ckey').value.trim()) && lsSet('kt_claude_model', $('cmodel').value);
+  NETCACHE.clear(); msg('ckMsg', ok ? 'ok' : 'bad', ok ? '✅ Đã lưu cài đặt trong trình duyệt này.' : 'Không lưu được (trình duyệt chặn lưu trữ cục bộ).');
+};
+$('ckDel').onclick = () => { lsSet('kt_claude_key', ''); $('ckey').value = ''; NETCACHE.clear(); msg('ckMsg', 'info', 'Đã xóa khóa API khỏi trình duyệt này.'); };
+$('ckTest').onclick = async () => {
+  $('ckSave').click(); msg('ckMsg', 'info', 'Đang thử kết nối…');
+  try { const r = await askClaude('環境保護', {lib: '', google: '', cat: 'Environment'}); msg('ckMsg', r ? 'ok' : 'warn', r ? `✅ Kết nối thành công. Thử “環境保護” → ${esc(r.vi)} (${esc(r.romaji)})` : 'Chưa nhập API key.'); }
+  catch (e) { msg('ckMsg', 'bad', 'Lỗi: ' + esc(e.message)); }
+};
+
+/* ===================== Khởi động ===================== */
+(async function init() {
+  try {
+    idb = await openDB();
+    await loadAll();
+    if (navigator.storage?.persist) navigator.storage.persist().catch(() => {});
+    if (navigator.storage?.estimate) navigator.storage.estimate().then(e => { $('storeInfo').textContent = `Dung lượng đang dùng: ${(e.usage / 1048576).toFixed(1)} MB (trình duyệt cho phép ${(e.quota / 1073741824).toFixed(1)} GB)`; }).catch(() => {});
+  } catch (e) {
+    $('stat').textContent = 'Không mở được bộ nhớ trình duyệt';
+    $('results').innerHTML = `<div class="msg bad">Trình duyệt không cho dùng IndexedDB (có thể do chế độ ẩn danh/Private). Hãy mở file bằng cửa sổ thường của Chrome hoặc Edge.<br>${esc(e.message || e)}</div>`;
+    return;
+  }
+  refreshStat(); refreshLists(); renderResults(true);
+  initSync().catch(e => console.error(e));
+})();
+</script>
+</body>
+</html>
